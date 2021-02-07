@@ -8,7 +8,7 @@ class WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
       height: 600,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

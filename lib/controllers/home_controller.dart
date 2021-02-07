@@ -11,10 +11,4 @@ class HomeController with ChangeNotifier {
     _homeSelectedView = value;
     notifyListeners();
   }
-
-  Future<dynamic> currentUser() async {
-    var user = await AuthService().currentUser();
-    print("DEBUG: User is null: ${user == null}");
-    return user;
-  }
 }

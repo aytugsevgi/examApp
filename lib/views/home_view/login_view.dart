@@ -1,3 +1,4 @@
+import 'package:examapp/controllers/base_controller.dart';
 import 'package:examapp/controllers/home_controller.dart';
 import 'package:examapp/controllers/login_controller.dart';
 import 'package:examapp/model/current_user.dart';
@@ -19,7 +20,7 @@ class LoginView extends StatelessWidget {
       child: Row(
         children: [
           AnimatedContainer(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
               height: 600,
               duration: Duration(milliseconds: 200),
               width: ResponsiveWidget.isLargeScreen(context)
@@ -188,12 +189,15 @@ class LoginView extends StatelessWidget {
       if (user is Instructor) {
         context.read<HomeController>().homeSelectedView =
             HomeSelectedView.Instructor;
+        context.read<BaseController>().selectedTab = TabType.Home;
       } else if (user is Student) {
         context.read<HomeController>().homeSelectedView =
             HomeSelectedView.Student;
+        context.read<BaseController>().selectedTab = TabType.Home;
       } else {
         context.read<HomeController>().homeSelectedView =
             HomeSelectedView.Welcome;
+        context.read<BaseController>().selectedTab = TabType.Home;
       }
     } else {
       Navigator.pop(context);

@@ -21,7 +21,7 @@ class RegisterView extends StatelessWidget {
         child: Row(
       children: [
         AnimatedContainer(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
           height: 650,
           duration: Duration(milliseconds: 200),
           width: ResponsiveWidget.isLargeScreen(context)
@@ -155,8 +155,8 @@ class RegisterView extends StatelessWidget {
                       textOff: 'Teacher',
                       colorOn: context.themeData.accentColor,
                       colorOff: context.themeData.primaryColor,
-                      iconOn: Icons.person,
-                      iconOff: Icons.person_search,
+                      iconOn: null,
+                      iconOff: null,
                       textSize: 16.0,
                       onChanged: (bool state) {
                         context.read<RegisterController>().isStudent = state;

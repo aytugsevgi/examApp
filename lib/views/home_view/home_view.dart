@@ -17,20 +17,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomFadeTransition(
-      child: Row(
-        children: [
-          Spacer(
-            flex: 2,
-          ),
-          Expanded(
-            flex: 50,
-            child: _getBody(context),
-          ),
-          Spacer(
-            flex: 10,
-          ),
-        ],
-      ),
+      child: _getBody(context),
     );
   }
 
@@ -39,6 +26,9 @@ class HomeView extends StatelessWidget {
         Provider.of<HomeController>(context, listen: true).homeSelectedView;
 
     switch (selectedView) {
+      case HomeSelectedView.Welcome:
+        return WelcomeView();
+        break;
       case HomeSelectedView.Login:
         return LoginView();
         break;
