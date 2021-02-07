@@ -65,7 +65,7 @@ class LoginView extends StatelessWidget {
                                     fontSize: 14,
                                     color: Colors.black.withOpacity(0.7)),
                             text:
-                                "Plesase log in to your account to continue with Online Team Management Tool."),
+                                "Please log in to your account to continue with Online Team Management Tool."),
                       ),
                     ),
                     Expanded(
