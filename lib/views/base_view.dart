@@ -1,10 +1,17 @@
 import 'package:examapp/controllers/base_controller.dart';
+import 'package:examapp/controllers/home_controller.dart';
+import 'package:examapp/controllers/login_controller.dart';
+import 'package:examapp/model/current_user.dart';
+import 'package:examapp/model/instructor.dart';
+import 'package:examapp/model/student.dart';
 import 'package:examapp/routes/application.dart';
 import 'package:examapp/utils/extension.dart';
 import 'package:examapp/views/about_view.dart';
 import 'package:examapp/views/classroom_view.dart';
 import 'package:examapp/views/contact_view.dart';
-import 'package:examapp/views/home_view.dart';
+import 'package:examapp/views/home_view/home_view.dart';
+import 'package:examapp/widget/custom_slide_transition.dart';
+import 'package:examapp/widget/loading_view.dart';
 import 'package:examapp/widget/responsive_widget.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -15,47 +22,82 @@ class BaseView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          AnimatedPositioned(
-            top: ResponsiveWidget.isSmallScreen(context) ? 40 : 100,
-            right: ResponsiveWidget.isSmallScreen(context) ? 10 : -50,
+        body: FutureBuilder(
+      future:
+          Provider.of<LoginController>(context, listen: false).currentUser(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          var user = snapshot.data;
+
+          if (user != null) {
+            CurrentUser.currentUser = user;
+            if (user is Instructor) {
+              Provider.of<HomeController>(context, listen: false)
+                  .homeSelectedView = HomeSelectedView.Instructor;
+            } else if (user is Student) {
+              Provider.of<HomeController>(context, listen: false)
+                  .homeSelectedView = HomeSelectedView.Student;
+            }
+          } else {
+            if (Provider.of<HomeController>(context, listen: false)
+                    .homeSelectedView ==
+                null) {
+              Provider.of<HomeController>(context, listen: false)
+                  .homeSelectedView = HomeSelectedView.Welcome;
+            }
+          }
+          return appBarAndBody(context);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    ));
+  }
+
+  Stack appBarAndBody(BuildContext context) {
+    return Stack(
+      children: [
+        AnimatedPositioned(
+          top: ResponsiveWidget.isSmallScreen(context) ? 40 : 100,
+          right: ResponsiveWidget.isSmallScreen(context) ? 10 : -50,
+          duration: Duration(seconds: 1),
+          child: AnimatedContainer(
             duration: Duration(seconds: 1),
-            child: AnimatedContainer(
-              duration: Duration(seconds: 1),
-              height: ResponsiveWidget.isSmallScreen(context)
-                  ? 100
-                  : ResponsiveWidget.isMediumScreen(context)
-                      ? 500
-                      : 600,
-              child: Image.asset(
-                "assets/background.jpg",
-                fit: BoxFit.contain,
+            height: ResponsiveWidget.isSmallScreen(context)
+                ? 100
+                : ResponsiveWidget.isMediumScreen(context)
+                    ? 500
+                    : context.dynamicWidth(0.4),
+            child: Image.asset(
+              "assets/background.jpg",
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              buildAppBar(context),
+              SizedBox(
+                height: 50,
               ),
-            ),
+              Expanded(child: ListView(children: [body(context)])),
+            ],
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Column(
-              children: [
-                buildAppBar(context),
-                SizedBox(
-                  height: 50,
-                ),
-                Expanded(child: ListView(children: [body(context)])),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget buildAppBar(BuildContext context) {
-    return ResponsiveWidget(
-        largeScreen: _appBarLarge(context),
-        mediumScreen: _appBarSmall(context),
-        smallScreen: _appBarSmall(context));
+    return CustomSlideTransition(
+      child: ResponsiveWidget(
+          largeScreen: _appBarLarge(context),
+          mediumScreen: _appBarSmall(context),
+          smallScreen: _appBarSmall(context)),
+    );
   }
 
   SizedBox _appBarLarge(BuildContext context) {
@@ -183,6 +225,7 @@ class BaseView extends StatelessWidget {
   Widget body(BuildContext context) {
     TabType currentType =
         Provider.of<BaseController>(context, listen: true).selectedTab;
+
     switch (currentType) {
       case TabType.Home:
         return HomeView();
