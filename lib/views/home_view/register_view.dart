@@ -11,7 +11,6 @@ import 'package:examapp/widget/loading_view.dart';
 import 'package:examapp/widget/responsive_widget.dart';
 import 'package:examapp/widget/submit_button.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:provider/provider.dart';
 
@@ -156,8 +155,8 @@ class RegisterView extends StatelessWidget {
                       textOff: 'Teacher',
                       colorOn: context.themeData.accentColor,
                       colorOff: context.themeData.primaryColor,
-                      iconOn: FontAwesomeIcons.userAlt,
-                      iconOff: FontAwesomeIcons.chalkboardTeacher,
+                      iconOn: Icons.person,
+                      iconOff: Icons.person_search,
                       textSize: 16.0,
                       onChanged: (bool state) {
                         context.read<RegisterController>().isStudent = state;
