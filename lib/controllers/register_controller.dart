@@ -84,16 +84,20 @@ class RegisterController with ChangeNotifier {
       var user;
       if (isStudent) {
         user = new Student(
-            firstName: _name,
-            lastName: lastname,
-            email: _email,
-            userId: _authResult.user.uid);
+          firstName: _name,
+          lastName: lastname,
+          email: _email,
+          userId: _authResult.user.uid,
+          classes: [],
+        );
       } else {
         user = new Instructor(
-            firstName: _name,
-            lastName: _lastname,
-            email: _email,
-            userId: _authResult.user.uid);
+          firstName: _name,
+          lastName: _lastname,
+          email: _email,
+          userId: _authResult.user.uid,
+          classes: [],
+        );
       }
 
       return UserService().saveUser(user);

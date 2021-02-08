@@ -88,7 +88,11 @@ class BaseView extends StatelessWidget {
               SizedBox(
                 height: 50,
               ),
-              Expanded(child: ListView(children: [body(context)])),
+              Expanded(
+                  child: SizedBox(
+                      height: context.dynamicHeight(1),
+                      width: context.dynamicWidth(1),
+                      child: body(context))),
             ],
           ),
         ),

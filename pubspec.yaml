@@ -34,7 +34,8 @@ dependencies:
   fluro: ^1.7.8
   provider: ^4.3.3
   lite_rolling_switch: ^0.1.1
-  font_awesome_flutter: ^8.11.0
+  uuid: ^2.2.2
+  clipboard: ^0.1.2+8
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,7 +55,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/background.jpg
+    - assets/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -17,88 +17,69 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomFadeTransition(
-      child: Row(
+      child: ListView(
+        shrinkWrap: true,
         children: [
-          AnimatedContainer(
-              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              height: 600,
-              duration: Duration(milliseconds: 200),
-              width: ResponsiveWidget.isLargeScreen(context)
-                  ? context.dynamicWidth(0.4)
-                  : ResponsiveWidget.isMediumScreen(context)
-                      ? context.dynamicWidth(0.5)
-                      : context.dynamicWidth(0.7),
-              child: Form(
-                key: context.read<LoginController>().formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Spacer(
-                      flex: 6,
-                    ),
-                    Expanded(
-                      flex: 8,
-                      child: FittedBox(
-                        child: Text(
-                          "Log in",
-                          style: context.themeData.textTheme.title.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.left,
+          Row(
+            children: [
+              AnimatedContainer(
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                  duration: Duration(milliseconds: 200),
+                  width: ResponsiveWidget.isLargeScreen(context)
+                      ? context.dynamicWidth(0.4)
+                      : ResponsiveWidget.isMediumScreen(context)
+                          ? context.dynamicWidth(0.5)
+                          : context.dynamicWidth(0.7),
+                  child: Form(
+                    key: context.read<LoginController>().formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 36,
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 6,
-                      child: Divider(
-                        thickness: 4,
-                        color: context.themeData.buttonColor,
-                        endIndent: context.dynamicWidth(0.1),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 11,
-                      child: RichText(
-                        textAlign: TextAlign.left,
-                        text: TextSpan(
-                            style: context.themeData.textTheme.subtitle1
-                                .copyWith(
-                                    fontSize: 14,
-                                    color: Colors.black.withOpacity(0.7)),
-                            text:
-                                "Please log in to your account to continue with Online Team Management Tool."),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 12,
-                      child: TextFormField(
-                        validator: (value) =>
-                            Provider.of<LoginController>(context, listen: false)
-                                .validateEmail(),
-                        decoration: new InputDecoration(
-                          hintText: "Email Address",
-                          errorStyle: context
-                              .themeData.inputDecorationTheme.errorStyle
-                              .copyWith(
-                            color: Colors.red.withOpacity(0.8),
+                        SizedBox(
+                          height: 48,
+                          child: FittedBox(
+                            child: Text(
+                              "Log in",
+                              style: context.themeData.textTheme.title.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
                           ),
                         ),
-                        onChanged: (String value) {
-                          Provider.of<LoginController>(context, listen: false)
-                              .email = value;
-                        },
-                      ),
-                    ),
-                    Expanded(
-                        flex: 12,
-                        child: TextFormField(
-                            obscureText: true,
+                        SizedBox(
+                          height: 36,
+                          child: Divider(
+                            thickness: 4,
+                            color: context.themeData.buttonColor,
+                            endIndent: context.dynamicWidth(0.1),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 66,
+                          child: RichText(
+                            textAlign: TextAlign.left,
+                            text: TextSpan(
+                                style: context.themeData.textTheme.subtitle1
+                                    .copyWith(
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(0.7)),
+                                text:
+                                    "Please log in to your account to continue with Online Team Management Tool."),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 72,
+                          child: TextFormField(
                             validator: (value) => Provider.of<LoginController>(
                                     context,
                                     listen: false)
-                                .validatePassword(),
+                                .validateEmail(),
                             decoration: new InputDecoration(
-                              hintText: "Password",
+                              hintText: "Email Address",
                               errorStyle: context
                                   .themeData.inputDecorationTheme.errorStyle
                                   .copyWith(
@@ -108,70 +89,101 @@ class LoginView extends StatelessWidget {
                             onChanged: (String value) {
                               Provider.of<LoginController>(context,
                                       listen: false)
-                                  .password = value;
-                            })),
-                    Expanded(
-                        flex: 14,
-                        child: Center(
-                            child: SubmitButton(
-                          colors: [
-                            context.themeData.primaryColor,
-                            context.themeData.primaryColor,
-                          ],
-                          child: Text(
-                            "Login",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 26),
+                                  .email = value;
+                            },
                           ),
-                          onTap: () async {
-                            await onTapLogin(context);
-                          },
-                        ))),
-                    Expanded(
-                        flex: 12,
-                        child: Center(
-                          child: Text("Forgot password?",
-                              style: context.themeData.textTheme.bodyText1
-                                  .copyWith(fontWeight: FontWeight.bold)),
-                        )),
-                    Expanded(
-                      flex: 15,
-                      child: Center(
-                        child: InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            Provider.of<HomeController>(context, listen: false)
-                                .homeSelectedView = HomeSelectedView.Register;
-                          },
-                          child: RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "You dont't have an account\n",
-                                  style: context.themeData.textTheme.bodyText1
+                        ),
+                        SizedBox(
+                            height: 72,
+                            child: TextFormField(
+                                obscureText: true,
+                                validator: (value) =>
+                                    Provider.of<LoginController>(context,
+                                            listen: false)
+                                        .validatePassword(),
+                                decoration: new InputDecoration(
+                                  hintText: "Password",
+                                  errorStyle: context
+                                      .themeData.inputDecorationTheme.errorStyle
                                       .copyWith(
-                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red.withOpacity(0.8),
                                   ),
                                 ),
-                                TextSpan(
-                                  text: "Sign Up",
-                                  style: context.themeData.textTheme.bodyText1
-                                      .copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: context.themeData.buttonColor),
-                                )
+                                onChanged: (String value) {
+                                  Provider.of<LoginController>(context,
+                                          listen: false)
+                                      .password = value;
+                                })),
+                        SizedBox(
+                            height: 84,
+                            child: Center(
+                                child: SubmitButton(
+                              colors: [
+                                context.themeData.primaryColor,
+                                context.themeData.primaryColor,
                               ],
+                              child: Text(
+                                "Login",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 26),
+                              ),
+                              onTap: () async {
+                                await onTapLogin(context);
+                              },
+                            ))),
+                        SizedBox(
+                            height: 72,
+                            child: Center(
+                              child: Text("Forgot password?",
+                                  style: context.themeData.textTheme.bodyText1
+                                      .copyWith(fontWeight: FontWeight.bold)),
+                            )),
+                        SizedBox(
+                          height: 90,
+                          child: Center(
+                            child: InkWell(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onTap: () {
+                                Provider.of<HomeController>(context,
+                                            listen: false)
+                                        .homeSelectedView =
+                                    HomeSelectedView.Register;
+                              },
+                              child: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "You dont't have an account\n",
+                                      style: context
+                                          .themeData.textTheme.bodyText1
+                                          .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: "Sign Up",
+                                      style: context
+                                          .themeData.textTheme.bodyText1
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: context
+                                                  .themeData.buttonColor),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        SizedBox(height: 24),
+                      ],
                     ),
-                    Spacer(flex: 4),
-                  ],
-                ),
-              )),
+                  )),
+            ],
+          ),
         ],
       ),
     );
@@ -186,15 +198,16 @@ class LoginView extends StatelessWidget {
       var user = await context.read<LoginController>().currentUser();
       Navigator.pop(context);
       CurrentUser.currentUser = user;
-      if (user is Instructor) {
+      if (CurrentUser.currentUser is Instructor) {
         context.read<HomeController>().homeSelectedView =
             HomeSelectedView.Instructor;
         context.read<BaseController>().selectedTab = TabType.Home;
-      } else if (user is Student) {
+      } else if (CurrentUser.currentUser is Student) {
         context.read<HomeController>().homeSelectedView =
             HomeSelectedView.Student;
         context.read<BaseController>().selectedTab = TabType.Home;
       } else {
+        print("HEEELLLOOO");
         context.read<HomeController>().homeSelectedView =
             HomeSelectedView.Welcome;
         context.read<BaseController>().selectedTab = TabType.Home;

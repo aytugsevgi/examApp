@@ -1,6 +1,9 @@
+import 'package:examapp/controllers/classroom_controller.dart';
 import 'package:examapp/controllers/home_controller.dart';
+import 'package:examapp/model/classroom.dart';
 import 'package:examapp/model/instructor.dart';
 import 'package:examapp/model/student.dart';
+import 'package:examapp/views/home_view/classroom_view.dart';
 
 import 'package:examapp/views/home_view/instructor_home_view.dart';
 import 'package:examapp/views/home_view/login_view.dart';
@@ -16,12 +19,27 @@ import 'package:provider/provider.dart';
 class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CustomFadeTransition(
-      child: _getBody(context),
-    );
+    return FutureBuilder<Widget>(
+        future: _getBody(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CustomFadeTransition(
+              child: snapshot.data,
+            );
+          }
+          return Center(
+              child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+              ),
+              CircularProgressIndicator(),
+            ],
+          ));
+        });
   }
 
-  Widget _getBody(BuildContext context) {
+  Future<Widget> _getBody(BuildContext context) async {
     HomeSelectedView selectedView =
         Provider.of<HomeController>(context, listen: true).homeSelectedView;
 
@@ -36,11 +54,16 @@ class HomeView extends StatelessWidget {
         return RegisterView();
         break;
       case HomeSelectedView.Instructor:
-        return InstructorHomeView();
+        List<Classroom> classrooms =
+            await context.read<ClassroomController>().getUserClassrooms();
+        return InstructorHomeView(classrooms: classrooms);
         break;
       case HomeSelectedView.Student:
-        return StudentHomeView();
+        List<Classroom> classrooms =
+            await context.read<ClassroomController>().getUserClassrooms();
+        return StudentHomeView(classrooms: classrooms);
         break;
+
       default:
         return WelcomeView();
     }

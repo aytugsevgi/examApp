@@ -65,7 +65,7 @@ class UserService {
     try {
       DocumentSnapshot currentUser =
           await _firestore.collection("instructors").doc(uid).get();
-
+      print(currentUser.data());
       if (currentUser.data() == null) {
         currentUser = await _firestore.collection("students").doc(uid).get();
         Map<String, dynamic> temp = currentUser.data();

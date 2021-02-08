@@ -1,7 +1,13 @@
 import 'package:examapp/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
-enum HomeSelectedView { Welcome, Login, Register, Instructor, Student }
+enum HomeSelectedView {
+  Welcome,
+  Login,
+  Register,
+  Instructor,
+  Student,
+}
 
 class HomeController with ChangeNotifier {
   HomeSelectedView _homeSelectedView = HomeSelectedView.Welcome;
