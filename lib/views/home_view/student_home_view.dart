@@ -18,25 +18,32 @@ class StudentHomeView extends StatelessWidget {
   const StudentHomeView({Key key, this.classrooms}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return CustomFadeTransition(
-        child: Container(
-      height: context.dynamicWidth(1),
-      width: ResponsiveWidget.isLargeScreen(context)
-          ? context.dynamicWidth(0.4)
-          : ResponsiveWidget.isMediumScreen(context)
-              ? context.dynamicWidth(0.5)
-              : context.dynamicWidth(0.7),
-      child: PageView(
-        scrollDirection: Axis.vertical,
-        physics: ScrollPhysics(parent: NeverScrollableScrollPhysics()),
-        controller: context.read<ClassroomController>().pageController,
-        pageSnapping: false,
-        children: [
-          body(context, classrooms ?? []),
-          classroom(context),
-        ],
-      ),
-    ));
+    return FutureBuilder(
+        future: context.read<ClassroomController>().getUserClassrooms(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CustomFadeTransition(
+                child: Container(
+              height: context.dynamicWidth(1),
+              width: ResponsiveWidget.isLargeScreen(context)
+                  ? context.dynamicWidth(0.4)
+                  : ResponsiveWidget.isMediumScreen(context)
+                      ? context.dynamicWidth(0.5)
+                      : context.dynamicWidth(0.7),
+              child: PageView(
+                scrollDirection: Axis.vertical,
+                physics: ScrollPhysics(parent: NeverScrollableScrollPhysics()),
+                controller: context.read<ClassroomController>().pageController,
+                pageSnapping: false,
+                children: [
+                  body(context, classrooms ?? []),
+                  classroom(context),
+                ],
+              ),
+            ));
+          }
+          return Center(child: CircularProgressIndicator());
+        });
   }
 
   Widget classroom(BuildContext context) {

@@ -5,8 +5,9 @@ import 'package:examapp/model/classroom.dart';
 import 'package:examapp/model/current_user.dart';
 import 'package:examapp/service/auth_service.dart';
 import 'package:examapp/utils/extension.dart';
-import 'package:examapp/views/home_view/classroom_view.dart';
 import 'package:examapp/views/home_view/create_classroom_view.dart';
+import 'package:examapp/views/home_view/create_exam_view.dart';
+import 'package:examapp/views/home_view/create_question_view.dart';
 import 'package:examapp/widget/custom_fade_transition.dart';
 import 'package:examapp/widget/fade_route.dart';
 import 'package:examapp/widget/loading_view.dart';
@@ -15,30 +16,50 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class InstructorHomeView extends StatelessWidget {
-  final List<Classroom> classrooms;
-
-  const InstructorHomeView({Key key, this.classrooms}) : super(key: key);
+  const InstructorHomeView({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return CustomFadeTransition(
-        child: Container(
-      height: context.dynamicWidth(1),
-      width: ResponsiveWidget.isLargeScreen(context)
-          ? context.dynamicWidth(0.4)
-          : ResponsiveWidget.isMediumScreen(context)
-              ? context.dynamicWidth(0.5)
-              : context.dynamicWidth(0.7),
-      child: PageView(
-        scrollDirection: Axis.vertical,
-        physics: ScrollPhysics(parent: NeverScrollableScrollPhysics()),
-        controller: context.read<ClassroomController>().pageController,
-        pageSnapping: false,
-        children: [
-          body(context, classrooms),
-          classroom(context),
-        ],
-      ),
-    ));
+    return FutureBuilder(
+        future: context.read<ClassroomController>().getUserClassrooms(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return CustomFadeTransition(
+              child: Container(
+                height: context.dynamicWidth(1),
+                width: ResponsiveWidget.isLargeScreen(context)
+                    ? context.dynamicWidth(0.4)
+                    : ResponsiveWidget.isMediumScreen(context)
+                        ? context.dynamicWidth(0.5)
+                        : context.dynamicWidth(0.7),
+                child: PageView(
+                  scrollDirection: Axis.vertical,
+                  physics:
+                      ScrollPhysics(parent: NeverScrollableScrollPhysics()),
+                  controller:
+                      context.read<ClassroomController>().pageController,
+                  pageSnapping: false,
+                  children: [
+                    body(context, snapshot.data),
+                    PageView(
+                      scrollDirection: Axis.horizontal,
+                      controller:
+                          context.read<ClassroomController>().pageController2,
+                      physics:
+                          ScrollPhysics(parent: NeverScrollableScrollPhysics()),
+                      children: [
+                        classroom(context),
+                        CreateQuestionView(),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        });
   }
 
   Widget classroom(BuildContext context) {
@@ -73,7 +94,16 @@ class InstructorHomeView extends StatelessWidget {
               ),
               OutlineButton(
                 borderSide: BorderSide(width: 2),
-                onPressed: () {},
+                onPressed: () {
+                  context
+                      .read<ClassroomController>()
+                      .pageController2
+                      .animateToPage(1,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeOutSine);
+                  /*Navigator.push(context,
+                      TransparentRoute(builder: (context) => CreateExamView()));*/
+                },
                 child: classCard(context, "+ Create A Exam"),
               ),
             ],
@@ -206,7 +236,7 @@ class InstructorHomeView extends StatelessWidget {
           vertical: context.dynamicHeight(0.01),
           horizontal: context.dynamicWidth(0.01)),
       child: new Text(
-        title,
+        title ?? "Unknown",
         style: context.themeData.textTheme.display3,
       ),
     );

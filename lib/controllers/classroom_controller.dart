@@ -10,14 +10,23 @@ class ClassroomController with ChangeNotifier {
   GlobalKey<FormState> formKey = new GlobalKey<FormState>();
   GlobalKey<FormState> joinFormKey = new GlobalKey<FormState>();
   PageController pageController = new PageController();
+  PageController pageController2 = new PageController();
   Classroom _selectedClassroom = Classroom(name: "", id: "");
   String accessCode = "";
   String name = "";
+  String _joinClassError = "";
 
   get selectedClassroom => _selectedClassroom;
 
   set selectedClassroom(Classroom classroom) {
     _selectedClassroom = classroom;
+    notifyListeners();
+  }
+
+  get joinClassError => _joinClassError;
+
+  set joinClassError(String value) {
+    _joinClassError = value;
     notifyListeners();
   }
 
@@ -29,9 +38,6 @@ class ClassroomController with ChangeNotifier {
   }
 
   String validateAccessCode() {
-    if (accessCode.length < 3) {
-      return "Invalid access code";
-    }
     return null;
   }
 
@@ -56,11 +62,10 @@ class ClassroomController with ChangeNotifier {
     return false;
   }
 
-  Future<String> joinClassroom() async {
+  Future<bool> joinClassroom() async {
     if (isJoinClassroomValidate()) {
       Classroom classroom =
           await ClassroomService().searchClassroom(id: accessCode);
-      print("DEBUG: Classroom founded: ${classroom.name}");
       if (classroom != null) {
         Student student = CurrentUser.currentUser;
         List<String> classrooms = student.classes.cast<String>() ?? [];
@@ -68,13 +73,18 @@ class ClassroomController with ChangeNotifier {
         student.classes = classrooms;
         bool isSuccess = await UserService().updateUser(student);
         if (isSuccess) {
-          return null;
+          joinClassError = "";
+          return true;
         }
-        return "User informations didn't update";
+        joinClassError = "User informations didn't update";
+        return false;
       }
-      return "Invalid access code";
+      joinClassError = "Invalid access code";
+      return false;
     }
-    return "";
+    // input validate olmadığı için db ile ilgili bir hata göstermiyoruz.
+    joinClassError = "";
+    return false;
   }
 
   Future<List<Classroom>> getUserClassrooms() async {

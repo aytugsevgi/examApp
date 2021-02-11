@@ -275,7 +275,7 @@ class BaseView extends StatelessWidget {
     bool isSignOut = await AuthService().singOut();
     Navigator.pop(context);
 
-    context.read<HomeController>().homeSelectedView = HomeSelectedView.Welcome;
     context.read<BaseController>().selectedTab = TabType.Home;
+    context.read<HomeController>().homeSelectedView = HomeSelectedView.Welcome;
   }
 }

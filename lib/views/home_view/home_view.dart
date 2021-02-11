@@ -1,10 +1,5 @@
 import 'package:examapp/controllers/classroom_controller.dart';
 import 'package:examapp/controllers/home_controller.dart';
-import 'package:examapp/model/classroom.dart';
-import 'package:examapp/model/instructor.dart';
-import 'package:examapp/model/student.dart';
-import 'package:examapp/views/home_view/classroom_view.dart';
-
 import 'package:examapp/views/home_view/instructor_home_view.dart';
 import 'package:examapp/views/home_view/login_view.dart';
 import 'package:examapp/views/home_view/register_view.dart';
@@ -19,30 +14,15 @@ import 'package:provider/provider.dart';
 class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-        future: _getBody(context),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return CustomFadeTransition(
-              child: snapshot.data,
-            );
-          }
-          return Center(
-              child: Column(
-            children: [
-              SizedBox(
-                height: 200,
-              ),
-              CircularProgressIndicator(),
-            ],
-          ));
-        });
+    return CustomFadeTransition(
+      child: _getBody(context),
+    );
   }
 
-  Future<Widget> _getBody(BuildContext context) async {
+  Widget _getBody(BuildContext context) {
     HomeSelectedView selectedView =
         Provider.of<HomeController>(context, listen: true).homeSelectedView;
-
+    print("HEELLOO");
     switch (selectedView) {
       case HomeSelectedView.Welcome:
         return WelcomeView();
@@ -54,14 +34,10 @@ class HomeView extends StatelessWidget {
         return RegisterView();
         break;
       case HomeSelectedView.Instructor:
-        List<Classroom> classrooms =
-            await context.read<ClassroomController>().getUserClassrooms();
-        return InstructorHomeView(classrooms: classrooms);
+        return InstructorHomeView();
         break;
       case HomeSelectedView.Student:
-        List<Classroom> classrooms =
-            await context.read<ClassroomController>().getUserClassrooms();
-        return StudentHomeView(classrooms: classrooms);
+        return StudentHomeView();
         break;
 
       default:

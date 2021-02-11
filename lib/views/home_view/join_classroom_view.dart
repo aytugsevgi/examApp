@@ -6,13 +6,7 @@ import 'package:examapp/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JoinClassroomView extends StatefulWidget {
-  @override
-  _JoinClassroomViewState createState() => _JoinClassroomViewState();
-}
-
-class _JoinClassroomViewState extends State<JoinClassroomView> {
-  String error;
+class JoinClassroomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -69,6 +63,14 @@ class _JoinClassroomViewState extends State<JoinClassroomView> {
                         ),
                       ),
                     ),
+                    Text(
+                      context.watch<ClassroomController>().joinClassError ??
+                          " ",
+                      style: context.themeData.inputDecorationTheme.errorStyle
+                          .copyWith(
+                        color: Colors.red.withOpacity(0.8),
+                      ),
+                    ),
                     Spacer(flex: 22),
                     Expanded(
                         flex: 4,
@@ -87,14 +89,11 @@ class _JoinClassroomViewState extends State<JoinClassroomView> {
                                   context,
                                   TransparentRoute(
                                       builder: (context) => LoadingView()));
-                              String message = await context
+                              bool isSuccess = await context
                                   .read<ClassroomController>()
                                   .joinClassroom();
-                              if (message != null) {
+                              if (!isSuccess) {
                                 Navigator.pop(context);
-                                setState(() {
-                                  error = message;
-                                });
                               } else {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
