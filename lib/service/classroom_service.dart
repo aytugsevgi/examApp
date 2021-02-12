@@ -35,6 +35,21 @@ class ClassroomService {
     }
   }
 
+  Future<bool> addExamToClassroom(Classroom classroom, String examId) async {
+    print("DEBUG: EXAMID $examId");
+    classroom.exams.add(examId);
+    try {
+      await _firestore
+          .collection("classrooms")
+          .doc(classroom.id)
+          .set(classroom.toJson());
+      return true;
+    } catch (e) {
+      print("DEBUG: Error ClassroomService addExamToClassroom $e");
+      return false;
+    }
+  }
+
   Future<Classroom> searchClassroom({String id}) async {
     try {
       DocumentSnapshot document = await FirebaseFirestore.instance
@@ -55,6 +70,7 @@ class ClassroomService {
     try {
       if (user is Instructor) {
         for (String id in user.classes) {
+          print("DÖN");
           DocumentSnapshot document = await FirebaseFirestore.instance
               .collection("classrooms")
               .doc(id)

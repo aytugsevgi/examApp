@@ -1,50 +1,57 @@
+import 'package:examapp/model/classroom.dart';
+import 'package:examapp/model/current_user.dart';
+import 'package:examapp/service/classroom_service.dart';
+import 'package:examapp/service/exam_service.dart';
 import 'package:examapp/utils/extension.dart';
 import 'package:flutter/material.dart';
 
 class CreateExamController with ChangeNotifier {
   GlobalKey<FormState> formKey = new GlobalKey<FormState>();
   String name = "";
-  int questionCount;
-  int examDuration;
   DateTime _startDate;
-
+  DateTime _dueDate;
   get startDate => _startDate;
   set startDate(DateTime value) {
     _startDate = value;
     notifyListeners();
   }
 
-  String startDateToString() {
-    if (_startDate != null) {
-      return "${_startDate.day.force2digitToString}-${_startDate.month.force2digitToString}-${_startDate.year.force2digitToString}  ${_startDate.hour.force2digitToString}:${_startDate.minute.force2digitToString}";
+  get dueDate => _dueDate;
+  set dueDate(DateTime value) {
+    _dueDate = value;
+    notifyListeners();
+  }
+
+  Future<bool> createExam(
+      List<Map<String, List<Map<String, bool>>>> questionList,
+      Classroom classroom) async {
+    try {
+      print("DEBUG: DUE DATE: ${dueDate.toString()}");
+      String examId = await ExamService()
+          .createExam(name, startDate, dueDate, questionList, classroom);
+      await ClassroomService().addExamToClassroom(classroom, examId);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  String dateToString(DateTime dateTime) {
+    if (dateTime != null) {
+      return "${dateTime.day.force2digitToString}-${dateTime.month.force2digitToString}-${dateTime.year.force2digitToString}  ${dateTime.hour.force2digitToString}:${dateTime.minute.force2digitToString}";
     }
     return "";
   }
 
   void resetData() {
     name = "";
-    questionCount = null;
-    examDuration = null;
     startDate = null;
+    dueDate = null;
   }
 
   String validateName() {
     if (name.length < 3) {
       return "Exam name must be least 3 characters";
-    }
-    return null;
-  }
-
-  String validateQuestionCount() {
-    if (questionCount == null || questionCount < 2) {
-      return "Question count must be least at 1";
-    }
-    return null;
-  }
-
-  String validateExamDuration() {
-    if (examDuration == null || examDuration < 2) {
-      return "Exam duration must be least at 1 minute";
     }
     return null;
   }

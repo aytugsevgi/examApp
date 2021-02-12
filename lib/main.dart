@@ -3,6 +3,7 @@ import 'package:examapp/controllers/base_controller.dart';
 import 'package:examapp/controllers/classroom_controller.dart';
 import 'package:examapp/controllers/create_exam_controller.dart';
 import 'package:examapp/controllers/create_question_controller.dart';
+import 'package:examapp/controllers/exam_controller.dart';
 import 'package:examapp/controllers/home_controller.dart';
 import 'package:examapp/controllers/login_controller.dart';
 import 'package:examapp/controllers/register_controller.dart';
@@ -29,6 +30,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => ClassroomController()),
     ChangeNotifierProvider(create: (_) => CreateExamController()),
     ChangeNotifierProvider(create: (_) => CreateQuestionController()),
+    ChangeNotifierProvider(create: (_) => ExamController()),
   ], child: MyApp()));
 }
 

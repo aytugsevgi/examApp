@@ -1,6 +1,9 @@
 import 'package:examapp/controllers/classroom_controller.dart';
 import 'package:examapp/controllers/create_exam_controller.dart';
+import 'package:examapp/controllers/create_question_controller.dart';
 import 'package:examapp/utils/extension.dart';
+import 'package:examapp/widget/fade_route.dart';
+import 'package:examapp/widget/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:provider/provider.dart';
@@ -66,78 +69,7 @@ class CreateExamView extends StatelessWidget {
                         height: 50,
                       ),
                       Text(
-                        "2) Enter count of questions",
-                        style: context.themeData.textTheme.display3,
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        validator: (value) => context
-                            .read<CreateExamController>()
-                            .validateQuestionCount(),
-                        decoration: new InputDecoration(
-                          hintText: "",
-                          errorStyle: context
-                              .themeData.inputDecorationTheme.errorStyle
-                              .copyWith(
-                            color: Colors.red.withOpacity(0.8),
-                          ),
-                        ),
-                        onChanged: (String value) {
-                          context.read<CreateExamController>().questionCount =
-                              int.parse(
-                            value,
-                            onError: (source) => 0,
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Text(
-                        "3) Enter duration of exam",
-                        style: context.themeData.textTheme.display3,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            flex: 60,
-                            child: TextFormField(
-                              validator: (value) => context
-                                  .read<CreateExamController>()
-                                  .validateExamDuration(),
-                              decoration: new InputDecoration(
-                                hintText: "",
-                                errorStyle: context
-                                    .themeData.inputDecorationTheme.errorStyle
-                                    .copyWith(
-                                  color: Colors.red.withOpacity(0.8),
-                                ),
-                              ),
-                              onChanged: (String value) {
-                                context
-                                        .read<CreateExamController>()
-                                        .examDuration =
-                                    int.parse(value, onError: (source) => 0);
-                              },
-                            ),
-                          ),
-                          Spacer(flex: 5),
-                          Expanded(
-                            flex: 35,
-                            child: Text(
-                              "minute",
-                              style: context.themeData.textTheme.display3
-                                  .copyWith(fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      Text(
-                        "4) Select start date",
+                        "2) Select start date",
                         style: context.themeData.textTheme.display3,
                       ),
                       SizedBox(
@@ -169,15 +101,72 @@ class CreateExamView extends StatelessWidget {
                           SizedBox(
                             width: 20,
                           ),
-                          context
-                                      .watch<CreateExamController>()
-                                      .startDateToString() !=
+                          context.watch<CreateExamController>().dateToString(
+                                      context
+                                          .read<CreateExamController>()
+                                          .startDate) !=
                                   ""
                               ? Text(
                                   "Start Date: " +
                                       context
                                           .watch<CreateExamController>()
-                                          .startDateToString(),
+                                          .dateToString(context
+                                              .read<CreateExamController>()
+                                              .startDate),
+                                  style: context.themeData.textTheme.display3
+                                      .copyWith(
+                                          color: context.themeData.accentColor))
+                              : SizedBox.shrink(),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      Text(
+                        "3) Select due date",
+                        style: context.themeData.textTheme.display3,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          OutlinedButton(
+                            onPressed: () {
+                              DatePicker.showDateTimePicker(context,
+                                  showTitleActions: true,
+                                  minTime: DateTime.now(),
+                                  maxTime:
+                                      DateTime(DateTime.now().year + 5, 12, 12),
+                                  onChanged: (date) {
+                                print('change $date');
+                              }, onConfirm: (date) {
+                                context.read<CreateExamController>().dueDate =
+                                    date;
+                              },
+                                  currentTime: DateTime.now(),
+                                  locale: LocaleType.tr);
+                            },
+                            child: Text(
+                              "Select",
+                              style: context.themeData.textTheme.display3,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          context.watch<CreateExamController>().dateToString(
+                                      context
+                                          .read<CreateExamController>()
+                                          .dueDate) !=
+                                  ""
+                              ? Text(
+                                  "Due Date: " +
+                                      context
+                                          .watch<CreateExamController>()
+                                          .dateToString(context
+                                              .read<CreateExamController>()
+                                              .dueDate),
                                   style: context.themeData.textTheme.display3
                                       .copyWith(
                                           color: context.themeData.accentColor))
@@ -197,12 +186,25 @@ class CreateExamView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             bool isValid = context
                                 .read<CreateExamController>()
                                 .isCreateExamValidate();
                             if (isValid) {
-                              // do something
+                              var questions = context
+                                  .read<CreateQuestionController>()
+                                  .questionAnswerList;
+                              var classroom = context
+                                  .read<ClassroomController>()
+                                  .selectedClassroom;
+                              Navigator.push(
+                                  context,
+                                  TransparentRoute(
+                                      builder: (context) => LoadingView()));
+                              await context
+                                  .read<CreateExamController>()
+                                  .createExam(questions, classroom);
+                              Navigator.pop(context);
                             } else {
                               // do something
                             }

@@ -1,7 +1,9 @@
 import 'package:examapp/model/classroom.dart';
 import 'package:examapp/model/current_user.dart';
+import 'package:examapp/model/exam.dart';
 import 'package:examapp/model/student.dart';
 import 'package:examapp/service/classroom_service.dart';
+import 'package:examapp/service/exam_service.dart';
 import 'package:examapp/service/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -54,7 +56,7 @@ class ClassroomController with ChangeNotifier {
       print("DEBUG: Form Validate");
       var uuid = Uuid();
       String id = uuid.v1();
-      Classroom classroom = new Classroom(id: id, name: name);
+      Classroom classroom = new Classroom(id: id, name: name, exams: []);
       bool isSuccess = await ClassroomService().createClassroom(classroom);
       return isSuccess;
     }
@@ -89,5 +91,15 @@ class ClassroomController with ChangeNotifier {
 
   Future<List<Classroom>> getUserClassrooms() async {
     return await ClassroomService().getUserClassrooms();
+  }
+
+  Future<List<Exam>> getClassroomExams(String classId) async {
+    Classroom classroom = await ClassroomService().searchClassroom(id: classId);
+    List<Exam> examList = [];
+    for (String examId in classroom.exams) {
+      Exam exam = await ExamService().getExam(examId);
+      examList.add(exam);
+    }
+    return examList;
   }
 }

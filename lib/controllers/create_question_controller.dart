@@ -7,7 +7,14 @@ class CreateQuestionController with ChangeNotifier {
   List<String> answer = ["", "", "", "", ""];
   List<bool> answerKey = [false, false, false, false, false];
   List<Map<String, List<Map<String, bool>>>> questionAnswerList = [];
-
+  List<TextEditingController> controllers = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+  ];
   bool isQuestionValidate() {
     return formKey.currentState.validate();
   }
@@ -17,6 +24,11 @@ class CreateQuestionController with ChangeNotifier {
       return "Question title can't be empty";
     }
     return null;
+  }
+
+  void deleteQuestion(int index) {
+    questionAnswerList.removeAt(index);
+    notifyListeners();
   }
 
   void changeCorrectAnswer(int index) {
@@ -40,5 +52,9 @@ class CreateQuestionController with ChangeNotifier {
     answer = ["", "", "", "", ""];
     answerKey = [false, false, false, false, false];
     questionTitle = "";
+    for (var controller in controllers) {
+      controller.clear();
+    }
+    notifyListeners();
   }
 }

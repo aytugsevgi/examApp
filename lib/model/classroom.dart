@@ -2,9 +2,10 @@ class Classroom {
   String _id;
   String _name;
   List<dynamic> _exams;
-  Classroom({String id, String name}) {
+  Classroom({String id, String name, List<dynamic> exams}) {
     this._id = id;
     this._name = name;
+    this._exams = exams;
   }
 
   String get id => _id;
