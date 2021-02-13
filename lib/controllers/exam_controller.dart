@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:examapp/model/answer.dart';
 import 'package:examapp/model/exam.dart';
 import 'package:examapp/model/question.dart';
+import 'package:examapp/model/student.dart';
 import 'package:examapp/service/exam_service.dart';
+import 'package:examapp/service/user_service.dart';
 import 'package:flutter/material.dart';
 
 class ExamController with ChangeNotifier {
@@ -13,9 +16,31 @@ class ExamController with ChangeNotifier {
   int remainTimeMin = 0;
   int remainTimeSec = 0;
   Timer _timer;
+  List<dynamic> submittedUserAnswers = [];
+
+  int getSuccessRate() {
+    int correctAnswerCount = 0;
+    for (int i = 0; i < questions.length; i++) {
+      List<Answer> answers = questions[i].values.first;
+      for (Answer answer in answers) {
+        if (answer.isCorrect == true) {
+          if (answer.id == submittedUserAnswers[i]) {
+            correctAnswerCount += 1;
+          }
+          break;
+        }
+      }
+    }
+    return (100 * correctAnswerCount / questions.length).ceil();
+  }
+
   void setAnswer(int index, String id) {
     answerList[index] = id;
     notifyListeners();
+  }
+
+  Future<void> submitExam() async {
+    await ExamService().submitExam(answerList, exam);
   }
 
   void startRemainTime() {
@@ -47,20 +72,18 @@ class ExamController with ChangeNotifier {
     questions = [];
     answerList = [];
     try {
-      print("1");
       exam = await ExamService().getExam(id);
-      print("2");
+
       List<String> questionIdList = exam.questions.cast<String>();
       for (String questionId in questionIdList) {
         List<Answer> answers = [];
         Question question = await ExamService().getQuestion(questionId);
-        print("3");
+
         List<String> answerIdList = question.answers.cast<String>();
-        print("4");
+
         for (String answerId in answerIdList) {
-          print("5");
           Answer answer = await ExamService().getAnswer(answerId);
-          print("6");
+
           answers.add(answer);
         }
         questions.add({question: answers});
@@ -68,6 +91,36 @@ class ExamController with ChangeNotifier {
       }
     } catch (e) {
       print("DEBUG: Error getExamData $e");
+    }
+  }
+
+  Future<List<Student>> getExamParticipants(Exam e) async {
+    try {
+      print("0");
+      List<QueryDocumentSnapshot> snapshots =
+          await ExamService().getExamParticipants(e);
+      print("1");
+      print(snapshots);
+      List<Student> students = [];
+      for (QueryDocumentSnapshot snapshot in snapshots) {
+        print("2");
+        Student student = await UserService().searchUser(snapshot.id);
+        students.add(student);
+        print("3");
+      }
+      return students;
+    } catch (e) {
+      print("DEBUG: Error on ExamController getExamParticipants $e");
+      return [];
+    }
+  }
+
+  Future<void> getUserAnswers(String examId, String userId) async {
+    try {
+      submittedUserAnswers =
+          await ExamService().submittedUserAnswers(examId, userId);
+    } catch (e) {
+      print("DEBUG: Error ExamController getCurrentUserAnswers $e");
     }
   }
 }

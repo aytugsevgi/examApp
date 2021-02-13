@@ -7,6 +7,7 @@ import 'package:examapp/model/exam.dart';
 import 'package:examapp/routes/application.dart';
 import 'package:examapp/service/auth_service.dart';
 import 'package:examapp/utils/extension.dart';
+import 'package:examapp/views/exam_view.dart';
 import 'package:examapp/views/home_view/join_classroom_view.dart';
 import 'package:examapp/widget/custom_fade_transition.dart';
 import 'package:examapp/widget/fade_route.dart';
@@ -126,7 +127,9 @@ class StudentHomeView extends StatelessWidget {
                                       EdgeInsetsGeometry>(EdgeInsets.zero)),
                               onPressed: () async {
                                 bool canTap =
-                                    exam.startDate.isBefore(DateTime.now());
+                                    exam.startDate.isBefore(DateTime.now()) &&
+                                        exam.dueDate.isAfter(DateTime.now()) &&
+                                        !exam.isSubmitted;
                                 if (canTap) {
                                   Navigator.push(
                                       context,
@@ -262,57 +265,100 @@ class StudentHomeView extends StatelessWidget {
           vertical: context.dynamicHeight(0.01),
           horizontal: context.dynamicWidth(0.01)),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          new Text(
-            exam.title ?? " ",
-            style: context.themeData.textTheme.display3,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    "Start Date",
-                    style: context.themeData.textTheme.display3
-                        .copyWith(color: context.themeData.primaryColor),
-                  ),
-                  Container(
-                    width: 90,
-                    color: Colors.grey,
-                    height: 1,
-                  ),
-                  Text(
-                    "${exam.startDate.toMyString}",
-                    style: context.themeData.textTheme.display3
-                        .copyWith(color: context.themeData.primaryColor),
-                  ),
-                ],
+          Spacer(flex: 20),
+          Expanded(
+            flex: 20,
+            child: Center(
+              child: Text(
+                exam.title ?? " ",
+                style: context.themeData.textTheme.display3,
               ),
-              Column(
-                children: [
-                  Text(
-                    "Due Date",
-                    style: context.themeData.textTheme.display3
-                        .copyWith(color: context.themeData.accentColor),
-                  ),
-                  Container(
-                    width: 80,
-                    color: Colors.grey,
-                    height: 1,
-                  ),
-                  Text(
-                    "${exam.dueDate.toMyString}",
-                    style: context.themeData.textTheme.display3
-                        .copyWith(color: context.themeData.accentColor),
-                  ),
-                ],
-              )
-            ],
-          )
+            ),
+          ),
+          Spacer(flex: 20),
+          Expanded(
+            flex: 15,
+            child: Text(
+              "Start Date: ${exam.startDate.toMyString}",
+              style: context.themeData.textTheme.display3
+                  .copyWith(color: Colors.green),
+            ),
+          ),
+          Expanded(
+            flex: 15,
+            child: Text(
+              "Due Date: ${exam.dueDate.toMyString}",
+              style: context.themeData.textTheme.display3
+                  .copyWith(color: context.themeData.accentColor),
+            ),
+          ),
+          Expanded(
+              flex: 10,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: examStatus(context, exam),
+              )),
         ],
       ),
     );
+  }
+
+  Widget examStatus(BuildContext context, Exam exam) {
+    bool isStarted = exam.startDate.isBefore(DateTime.now());
+    bool isEnded = exam.dueDate.isBefore(DateTime.now());
+
+    if (exam.isSubmitted && isEnded) {
+      return OutlinedButton(
+        onPressed: () async {
+          Navigator.push(
+              context, TransparentRoute(builder: (context) => LoadingView()));
+          await context.read<ExamController>().getExamData(exam.id);
+          context.read<ExamController>().startRemainTime();
+          await context
+              .read<ExamController>()
+              .getUserAnswers(exam.id, CurrentUser.currentUser.userId);
+          print(context.read<ExamController>().submittedUserAnswers.toString());
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ExamView(
+                        exam.id,
+                        isPreview: true,
+                      )));
+        },
+        child: Text(
+          "View Result",
+          style: context.themeData.textTheme.display3
+              .copyWith(color: Colors.green),
+        ),
+      );
+    } else if (exam.isSubmitted) {
+      return Text(
+        "Submitted",
+        style: context.themeData.textTheme.display3
+            .copyWith(color: context.themeData.primaryColor),
+      );
+    } else if (!isStarted) {
+      return Text(
+        "Not started",
+        style: context.themeData.textTheme.display3
+            .copyWith(color: context.themeData.primaryColor),
+      );
+    } else if (isStarted && !isEnded) {
+      return Text(
+        "Progress",
+        style:
+            context.themeData.textTheme.display3.copyWith(color: Colors.green),
+      );
+    } else {
+      return Text(
+        "Done",
+        style: context.themeData.textTheme.display3
+            .copyWith(color: context.themeData.accentColor),
+      );
+    }
   }
 }

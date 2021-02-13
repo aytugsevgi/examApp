@@ -12,7 +12,10 @@ class Routes {
   });
   static Handler examHandler =
       Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return ExamView(params["id"][0]);
+    return ExamView(
+      params["id"][0],
+      isPreview: false,
+    );
   });
 
   static void configureRoutes(FluroRouter router) {

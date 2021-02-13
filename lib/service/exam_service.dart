@@ -21,11 +21,12 @@ class ExamService {
       var uuid = Uuid();
       String examId = uuid.v1();
       Exam exam = Exam(
-          id: examId,
-          title: name,
-          startDate: startDate,
-          dueDate: dueDate,
-          questions: questionIdList);
+        id: examId,
+        title: name,
+        startDate: startDate,
+        dueDate: dueDate,
+        questions: questionIdList,
+      );
       print("BAŞLADI");
       await _firestore.collection("exams").doc(examId).set(exam.toJson());
       print("BİTTİ");
@@ -36,6 +37,36 @@ class ExamService {
     }
   }
 
+  Future<bool> submitExam(List<String> answers, Exam exam) async {
+    try {
+      await _firestore
+          .collection("exams")
+          .doc(exam.id)
+          .collection("participants")
+          .doc(CurrentUser.currentUser.userId)
+          .set({"userId": CurrentUser.currentUser.userId, "answers": answers});
+      return true;
+    } catch (e) {
+      print("DEBUG: Error on ExamService submitExam $e");
+      return false;
+    }
+  }
+
+  Future<List<QueryDocumentSnapshot>> getExamParticipants(Exam exam) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection("exams")
+          .doc(exam.id)
+          .collection("participants")
+          .get();
+      print(querySnapshot.docs);
+      return querySnapshot.docs;
+    } catch (e) {
+      print("DEBUG: Error on ExamService getExamParticipants $e");
+      return [];
+    }
+  }
+
   Future<Exam> getExam(String id) async {
     try {
       var map = await _firestore.collection("exams").doc(id).get();
@@ -43,6 +74,43 @@ class ExamService {
     } catch (e) {
       print("DEBUG: Error ExamService getExam $e");
       return null;
+    }
+  }
+
+  Future<bool> isCurrentUserSubmitted(String examId) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _firestore
+          .collection("exams")
+          .doc(examId)
+          .collection("participants")
+          .doc(CurrentUser.currentUser.userId)
+          .get();
+      if (documentSnapshot.data() != null) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("DEBUG: Error on ExamService isCurrentUserSubmitted $e");
+      return false;
+    }
+  }
+
+  Future<List<dynamic>> submittedUserAnswers(
+      String examId, String userId) async {
+    try {
+      DocumentSnapshot documentSnapshot = await _firestore
+          .collection("exams")
+          .doc(examId)
+          .collection("participants")
+          .doc(userId)
+          .get();
+      if (documentSnapshot.data() != null) {
+        return documentSnapshot.data()["answers"];
+      }
+      return [];
+    } catch (e) {
+      print("DEBUG: Error on ExamService submittedUserAnswers $e");
+      return [];
     }
   }
 

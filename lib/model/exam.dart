@@ -6,7 +6,7 @@ class Exam {
   DateTime _startDate;
   DateTime _dueDate;
   List<dynamic> _questions;
-
+  bool isSubmitted;
   Exam(
       {String id,
       String title,

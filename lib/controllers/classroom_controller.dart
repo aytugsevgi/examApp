@@ -98,6 +98,7 @@ class ClassroomController with ChangeNotifier {
     List<Exam> examList = [];
     for (String examId in classroom.exams) {
       Exam exam = await ExamService().getExam(examId);
+      exam.isSubmitted = await ExamService().isCurrentUserSubmitted(examId);
       examList.add(exam);
     }
     return examList;
