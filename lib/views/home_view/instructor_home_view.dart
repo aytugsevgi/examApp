@@ -129,9 +129,11 @@ class InstructorHomeView extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     FlutterClipboard.copy("${classroom.id}");
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Access code copied to clipboard")));
                   },
                   child: Text(
-                    "Copy to share link",
+                    "Copy to clip board the access code",
                     style: context.themeData.textTheme.display1.copyWith(
                         color: Colors.blue[400],
                         decoration: TextDecoration.underline,
@@ -211,7 +213,7 @@ class InstructorHomeView extends StatelessWidget {
             child: Text(
               "Start Date: ${exam.startDate.toMyString}",
               style: context.themeData.textTheme.display3
-                  .copyWith(color: Colors.green),
+                  .copyWith(color: Colors.grey),
             ),
           ),
           Expanded(
@@ -219,7 +221,7 @@ class InstructorHomeView extends StatelessWidget {
             child: Text(
               "Due Date: ${exam.dueDate.toMyString}",
               style: context.themeData.textTheme.display3
-                  .copyWith(color: context.themeData.accentColor),
+                  .copyWith(color: Colors.grey),
             ),
           ),
           Expanded(
@@ -237,13 +239,14 @@ class InstructorHomeView extends StatelessWidget {
     bool isEnded = exam.dueDate.isBefore(DateTime.now());
 
     if (isEnded) {
-      return OutlinedButton(
+      return RaisedButton(
+        color: Colors.green,
         onPressed: () async {
           Navigator.push(
               context, TransparentRoute(builder: (context) => LoadingView()));
           List<Student> students =
               await context.read<ExamController>().getExamParticipants(exam);
-          
+
           Navigator.pop(context);
           Navigator.push(
               context,
@@ -256,7 +259,7 @@ class InstructorHomeView extends StatelessWidget {
         child: Text(
           "View Result",
           style: context.themeData.textTheme.display3
-              .copyWith(color: Colors.green),
+              .copyWith(color: Colors.white),
         ),
       );
     } else {

@@ -57,6 +57,8 @@ class CreateExamController with ChangeNotifier {
   }
 
   bool isCreateExamValidate() {
-    return formKey.currentState.validate();
+    return formKey.currentState.validate() &&
+        _startDate != null &&
+        _dueDate != null;
   }
 }

@@ -283,7 +283,7 @@ class StudentHomeView extends StatelessWidget {
             child: Text(
               "Start Date: ${exam.startDate.toMyString}",
               style: context.themeData.textTheme.display3
-                  .copyWith(color: Colors.green),
+                  .copyWith(color: Colors.grey),
             ),
           ),
           Expanded(
@@ -291,7 +291,7 @@ class StudentHomeView extends StatelessWidget {
             child: Text(
               "Due Date: ${exam.dueDate.toMyString}",
               style: context.themeData.textTheme.display3
-                  .copyWith(color: context.themeData.accentColor),
+                  .copyWith(color: Colors.grey),
             ),
           ),
           Expanded(
@@ -310,7 +310,8 @@ class StudentHomeView extends StatelessWidget {
     bool isEnded = exam.dueDate.isBefore(DateTime.now());
 
     if (exam.isSubmitted && isEnded) {
-      return OutlinedButton(
+      return RaisedButton(
+        color: Colors.green,
         onPressed: () async {
           Navigator.push(
               context, TransparentRoute(builder: (context) => LoadingView()));
@@ -332,7 +333,7 @@ class StudentHomeView extends StatelessWidget {
         child: Text(
           "View Result",
           style: context.themeData.textTheme.display3
-              .copyWith(color: Colors.green),
+              .copyWith(color: Colors.white),
         ),
       );
     } else if (exam.isSubmitted) {

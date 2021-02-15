@@ -23,11 +23,15 @@ class AnswerWidget extends StatefulWidget {
 class _AnswerWidgetState extends State<AnswerWidget> {
   @override
   Widget build(BuildContext context) {
+    print("DEBUG: isPreview: ${widget.isPreview}");
     return Row(
       children: [
         Checkbox(
             activeColor: widget.isPreview ? Colors.grey : Colors.green,
-            value: widget.submittedAnswer == widget.answer.id,
+            value: widget.isPreview
+                ? widget.submittedAnswer == widget.answer.id
+                : context.watch<ExamController>().answerList[widget.index] ==
+                    widget.answer.id,
             onChanged: (value) {
               if (!widget.isPreview) {
                 if (!value) {
@@ -45,7 +49,11 @@ class _AnswerWidgetState extends State<AnswerWidget> {
         Text(
           widget.answer.content,
           style: context.themeData.textTheme.display3.copyWith(
-            color: widget.answer.isCorrect ? Colors.green : Colors.black,
+            color: !widget.isPreview
+                ? Colors.black
+                : widget.answer.isCorrect
+                    ? Colors.green
+                    : Colors.black,
           ),
         ),
         SizedBox(

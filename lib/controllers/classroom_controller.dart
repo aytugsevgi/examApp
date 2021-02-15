@@ -101,6 +101,7 @@ class ClassroomController with ChangeNotifier {
       exam.isSubmitted = await ExamService().isCurrentUserSubmitted(examId);
       examList.add(exam);
     }
+    examList.sort((a, b) => a.startDate.isBefore(b.startDate) ? 1 : -1);
     return examList;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:examapp/controllers/classroom_controller.dart';
 import 'package:examapp/controllers/create_exam_controller.dart';
 import 'package:examapp/controllers/create_question_controller.dart';
+import 'package:examapp/controllers/home_controller.dart';
 import 'package:examapp/utils/extension.dart';
 import 'package:examapp/widget/fade_route.dart';
 import 'package:examapp/widget/loading_view.dart';
@@ -205,8 +206,14 @@ class CreateExamView extends StatelessWidget {
                                   .read<CreateExamController>()
                                   .createExam(questions, classroom);
                               Navigator.pop(context);
+
+                              Navigator.pop(context);
+                              context.read<HomeController>().homeSelectedView =
+                                  HomeSelectedView.Instructor;
                             } else {
-                              // do something
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                  backgroundColor: Colors.red,
+                                  content: Text("Fields are not valid")));
                             }
                           },
                           child: Text(
