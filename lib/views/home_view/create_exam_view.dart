@@ -204,7 +204,7 @@ class CreateExamView extends StatelessWidget {
                                       builder: (context) => LoadingView()));
                               await context
                                   .read<CreateExamController>()
-                                  .createExam(questions, classroom);
+                                  .createExam(context, questions, classroom);
                               Navigator.pop(context);
 
                               Navigator.pop(context);

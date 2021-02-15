@@ -19,25 +19,62 @@ class ExamView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          leadingWidth: 160,
-          leading: Center(
-            child: RichText(
-              maxLines: 1,
-              text: TextSpan(
-                  style: context.themeData.textTheme.display1,
-                  children: [
-                    TextSpan(text: "E"),
-                    TextSpan(text: "G"),
-                    TextSpan(text: "E"),
-                    TextSpan(
-                      text: "xam",
-                      style: context.themeData.textTheme.display1.copyWith(
-                        color: Color(0xFFFD7272),
+          leadingWidth: 260,
+          leading: isPreview
+              ? Center(
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 16,
                       ),
-                    ),
-                  ]),
-            ),
-          ),
+                      InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Text(
+                            "Back",
+                            style: context.themeData.textTheme.display3,
+                          )),
+                      SizedBox(
+                        width: 16,
+                      ),
+                      RichText(
+                        maxLines: 1,
+                        text: TextSpan(
+                            style: context.themeData.textTheme.display1,
+                            children: [
+                              TextSpan(text: "E"),
+                              TextSpan(text: "G"),
+                              TextSpan(text: "E"),
+                              TextSpan(
+                                text: "xam",
+                                style: context.themeData.textTheme.display1
+                                    .copyWith(
+                                  color: Color(0xFFFD7272),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ],
+                  ),
+                )
+              : Center(
+                  child: RichText(
+                    maxLines: 1,
+                    text: TextSpan(
+                        style: context.themeData.textTheme.display1,
+                        children: [
+                          TextSpan(text: "E"),
+                          TextSpan(text: "G"),
+                          TextSpan(text: "E"),
+                          TextSpan(
+                            text: "xam",
+                            style:
+                                context.themeData.textTheme.display1.copyWith(
+                              color: Color(0xFFFD7272),
+                            ),
+                          ),
+                        ]),
+                  ),
+                ),
           centerTitle: true,
           backgroundColor: Colors.white,
           title: Text(

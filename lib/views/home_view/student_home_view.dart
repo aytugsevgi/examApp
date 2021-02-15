@@ -140,7 +140,7 @@ class StudentHomeView extends StatelessWidget {
                                       .getExamData(exam.id);
                                   context
                                       .read<ExamController>()
-                                      .startRemainTime();
+                                      .startRemainTime(context);
                                   Navigator.pop(context);
                                   Application.router.navigateTo(
                                       context, "/exam/${exam.id}",
@@ -316,11 +316,11 @@ class StudentHomeView extends StatelessWidget {
           Navigator.push(
               context, TransparentRoute(builder: (context) => LoadingView()));
           await context.read<ExamController>().getExamData(exam.id);
-          context.read<ExamController>().startRemainTime();
+
           await context
               .read<ExamController>()
               .getUserAnswers(exam.id, CurrentUser.currentUser.userId);
-          print(context.read<ExamController>().submittedUserAnswers.toString());
+
           Navigator.pop(context);
           Navigator.push(
               context,

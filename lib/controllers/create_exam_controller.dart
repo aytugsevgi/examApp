@@ -1,9 +1,11 @@
+import 'package:examapp/controllers/create_question_controller.dart';
 import 'package:examapp/model/classroom.dart';
 import 'package:examapp/model/current_user.dart';
 import 'package:examapp/service/classroom_service.dart';
 import 'package:examapp/service/exam_service.dart';
 import 'package:examapp/utils/extension.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreateExamController with ChangeNotifier {
   GlobalKey<FormState> formKey = new GlobalKey<FormState>();
@@ -23,6 +25,7 @@ class CreateExamController with ChangeNotifier {
   }
 
   Future<bool> createExam(
+      BuildContext context,
       List<Map<String, List<Map<String, bool>>>> questionList,
       Classroom classroom) async {
     try {
@@ -30,6 +33,7 @@ class CreateExamController with ChangeNotifier {
       String examId = await ExamService()
           .createExam(name, startDate, dueDate, questionList, classroom);
       await ClassroomService().addExamToClassroom(classroom, examId);
+      context.read<CreateQuestionController>().resetData();
       return true;
     } catch (e) {
       return false;

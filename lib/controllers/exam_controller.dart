@@ -1,13 +1,21 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:examapp/controllers/base_controller.dart';
+import 'package:examapp/controllers/classroom_controller.dart';
+import 'package:examapp/controllers/home_controller.dart';
 import 'package:examapp/model/answer.dart';
 import 'package:examapp/model/exam.dart';
 import 'package:examapp/model/question.dart';
 import 'package:examapp/model/student.dart';
+import 'package:examapp/routes/application.dart';
 import 'package:examapp/service/exam_service.dart';
 import 'package:examapp/service/user_service.dart';
+import 'package:examapp/widget/fade_route.dart';
+import 'package:examapp/widget/loading_view.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'dart:html' as html;
 
 class ExamController with ChangeNotifier {
   Exam exam;
@@ -43,21 +51,29 @@ class ExamController with ChangeNotifier {
     await ExamService().submitExam(answerList, exam);
   }
 
-  void startRemainTime() {
+  void startRemainTime(BuildContext context) {
     Duration duration = exam.dueDate.difference(DateTime.now());
     int _start = duration.inSeconds;
-    remainTimeMin = (_start / 60).ceil();
+    remainTimeMin = (_start / 60).floor();
     remainTimeSec = _start % 60;
     int tempRemain;
     const oneDecimal = const Duration(seconds: 1);
-    _timer = new Timer.periodic(oneDecimal, (Timer timer) {
+    _timer = new Timer.periodic(oneDecimal, (Timer timer) async {
       if (_start < 1) {
         remainTimeMin = 0;
         notifyListeners();
         _timer.cancel();
+        Navigator.push(
+            context, TransparentRoute(builder: (context) => LoadingView()));
+        await submitExam();
+        Navigator.pop(context);
+        Navigator.pop(context);
+        context.read<ClassroomController>().resetData();
+        await Application.router.navigateTo(context, "/");
+        html.window.location.reload();
       } else {
         _start -= 1;
-        tempRemain = (_start / 60).ceil();
+        tempRemain = (_start / 60).floor();
         remainTimeSec = _start % 60;
         if (tempRemain != remainTimeMin && remainTimeSec != 0) {
           remainTimeMin = tempRemain;

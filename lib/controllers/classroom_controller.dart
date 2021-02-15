@@ -76,6 +76,7 @@ class ClassroomController with ChangeNotifier {
         bool isSuccess = await UserService().updateUser(student);
         if (isSuccess) {
           joinClassError = "";
+          accessCode = "";
           return true;
         }
         joinClassError = "User informations didn't update";
@@ -103,5 +104,10 @@ class ClassroomController with ChangeNotifier {
     }
     examList.sort((a, b) => a.startDate.isBefore(b.startDate) ? 1 : -1);
     return examList;
+  }
+
+  void resetData() {
+    pageController.jumpToPage(0);
+    pageController2.jumpToPage(0);
   }
 }

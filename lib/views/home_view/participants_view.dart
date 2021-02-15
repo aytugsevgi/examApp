@@ -46,6 +46,7 @@ class ParticipantsView extends StatelessWidget {
                         style: context.themeData.textTheme.display3,
                       ))
                     : ListView.builder(
+                        itemCount: students.length,
                         itemBuilder: (context, index) {
                           return InkWell(
                               child: ListTile(

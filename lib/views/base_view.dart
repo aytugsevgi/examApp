@@ -4,7 +4,6 @@ import 'package:examapp/controllers/login_controller.dart';
 import 'package:examapp/model/current_user.dart';
 import 'package:examapp/model/instructor.dart';
 import 'package:examapp/model/student.dart';
-import 'package:examapp/routes/application.dart';
 import 'package:examapp/service/auth_service.dart';
 import 'package:examapp/utils/extension.dart';
 import 'package:examapp/views/about_view.dart';
@@ -15,11 +14,10 @@ import 'package:examapp/widget/custom_slide_transition.dart';
 import 'package:examapp/widget/fade_route.dart';
 import 'package:examapp/widget/loading_view.dart';
 import 'package:examapp/widget/responsive_widget.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase/firebase.dart' as firebase;
+import 'dart:html' as html;
 
 class BaseView extends StatelessWidget {
   const BaseView({Key key}) : super(key: key);
@@ -274,10 +272,11 @@ class BaseView extends StatelessWidget {
         .push(TransparentRoute(builder: (context) => LoadingView()));
     await AuthService().singOut();
     CurrentUser.currentUser = null;
-    await Future.delayed(Duration(milliseconds: 300));
+
     Navigator.pop(context);
 
     context.read<BaseController>().selectedTab = TabType.Home;
     context.read<HomeController>().homeSelectedView = HomeSelectedView.Welcome;
+    html.window.location.reload();
   }
 }

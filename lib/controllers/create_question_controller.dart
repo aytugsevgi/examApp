@@ -57,4 +57,14 @@ class CreateQuestionController with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void resetData() {
+    answer = ["", "", "", "", ""];
+    answerKey = [false, false, false, false, false];
+    questionTitle = "";
+    questionAnswerList = [];
+    for (var controller in controllers) {
+      controller.clear();
+    }
+  }
 }
