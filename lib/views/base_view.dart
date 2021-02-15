@@ -272,7 +272,9 @@ class BaseView extends StatelessWidget {
   Future<void> signOut(BuildContext context) async {
     Navigator.of(context)
         .push(TransparentRoute(builder: (context) => LoadingView()));
-    bool isSignOut = await AuthService().singOut();
+    await AuthService().singOut();
+    CurrentUser.currentUser = null;
+    await Future.delayed(Duration(milliseconds: 300));
     Navigator.pop(context);
 
     context.read<BaseController>().selectedTab = TabType.Home;
